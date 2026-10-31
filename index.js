@@ -40,6 +40,12 @@ app.get('/studios', async (req, res) => {
     res.send(result)
 })
 
+app.get("/studios/owner/:email", async (req, res) => {
+    const email = req.params.email;
+    const result = await studios.find({ ownerEmail: email }).toArray();
+    res.send(result);
+});
+
 // http://localhost:5000/studios/:id
 app.get('/studios/:id', async (req, res) => {
     const id = req.params.id
@@ -47,6 +53,8 @@ app.get('/studios/:id', async (req, res) => {
     const result = await studios.findOne(query)
     res.send(result)
 })
+
+
 
 
 app.listen(PORT, (req, res) => {
