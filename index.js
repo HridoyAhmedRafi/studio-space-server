@@ -35,6 +35,13 @@ app.post('/add-studio', async (req, res) => {
     res.send(result)
 })
 
+// api to get studios data
+// http://localhost:5000/studios
+app.get('/studios', async (req, res) => {
+    const result = await studios.find().toArray()
+    res.send(result)
+})
+
 
 app.listen(PORT, (req, res) => {
     console.log(`Server running on PORT ${PORT}`);
