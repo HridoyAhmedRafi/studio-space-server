@@ -14,11 +14,23 @@ export async function connectToMongoDB() {
         console.dir(err);
     }
 }
-connectToMongoDB()
+const mongoClient = await connectToMongoDB()
+const db = mongoClient.db("StudioSpace")
+// studios collection
+const studios = db.collection("studios")
 
 app.get('/', (req, res) => {
     res.send({ Msg: "API is working" })
 })
+
+// add new studio post api
+// http://localhost:5000/add-studio
+app.post('/add-studio', async (req, res) => {
+    const studio = req.body;
+    const result = await studios.insertOne(studio)
+    res.send(result)
+})
+
 
 app.listen(PORT, (req, res) => {
     console.log(`Server running on PORT ${PORT}`);
