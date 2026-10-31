@@ -40,6 +40,11 @@ app.get('/studios', async (req, res) => {
     res.send(result)
 })
 
+app.get('/featured-studio-data', async (req, res) => {
+    const result = await studios.find().sort({ _id: -1 }).limit(6).toArray()
+    res.send(result)
+})
+
 app.get("/studios/owner/:email", async (req, res) => {
     const email = req.params.email;
     const result = await studios.find({ ownerEmail: email }).toArray();
