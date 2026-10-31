@@ -1,8 +1,12 @@
-import express from "express"
+import express, { json } from "express"
+import cors from "cors"
 import 'dotenv/config'
 import { MongoClient } from 'mongodb';
 const app = express()
 const PORT = process.env.PORT || 5000;
+
+app.use(cors())
+app.use(json())
 
 const client = new MongoClient(process.env.MONGODB_URI);
 export async function connectToMongoDB() {
