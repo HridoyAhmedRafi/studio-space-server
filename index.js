@@ -1,7 +1,7 @@
 import express, { json } from "express"
 import cors from "cors"
 import 'dotenv/config'
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 const app = express()
 const PORT = process.env.PORT || 5000;
 
@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
     res.send({ Msg: "API is working" })
 })
 
-// add new studio post api
 // http://localhost:5000/add-studio
 app.post('/add-studio', async (req, res) => {
     const studio = req.body;
@@ -35,10 +34,17 @@ app.post('/add-studio', async (req, res) => {
     res.send(result)
 })
 
-// api to get studios data
 // http://localhost:5000/studios
 app.get('/studios', async (req, res) => {
     const result = await studios.find().toArray()
+    res.send(result)
+})
+
+// http://localhost:5000/studios/:id
+app.get('/studios/:id', async (req, res) => {
+    const id = req.params.id
+    const query = { _id: new ObjectId(id) }
+    const result = await studios.findOne(query)
     res.send(result)
 })
 
