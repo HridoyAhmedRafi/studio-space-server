@@ -70,6 +70,13 @@ app.patch('/update-studio/:id', async (req, res) => {
     res.send(result)
 })
 
+app.delete('/delete-studio/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await studios.deleteOne(query)
+    res.send(result)
+})
+
 app.post('/add-bookings', async (req, res) => {
     const booking = req.body;
     booking.status = "Pending";
