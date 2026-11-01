@@ -60,6 +60,16 @@ app.get('/studios/:id', async (req, res) => {
     res.send(result)
 })
 
+app.patch('/update-studio/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    const updateDoc = {
+        $set: req.body
+    }
+    const result = await studios.updateOne(filter, updateDoc);
+    res.send(result)
+})
+
 app.post('/add-bookings', async (req, res) => {
     const booking = req.body;
     booking.status = "Pending";
@@ -73,6 +83,17 @@ app.get("/bookings/:email", async (req, res) => {
     res.send(result)
 })
 
+app.patch("/booking/cancel/:id", async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id), status: "Pending" };
+    const updateDoc = {
+        $set: {
+            status: "Cancelled"
+        }
+    }
+    const result = await bookings.updateOne(filter, updateDoc);
+    res.send(result);
+})
 
 app.listen(PORT, (req, res) => {
     console.log(`Server running on PORT ${PORT}`);
