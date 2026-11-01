@@ -62,6 +62,7 @@ app.get('/studios/:id', async (req, res) => {
 
 app.post('/add-bookings', async (req, res) => {
     const booking = req.body;
+    booking.status = "Pending";
     const result = await bookings.insertOne(booking)
     res.send(result)
 })
