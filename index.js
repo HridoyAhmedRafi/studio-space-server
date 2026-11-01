@@ -66,7 +66,11 @@ app.post('/add-bookings', async (req, res) => {
     res.send(result)
 })
 
-
+app.get("/bookings/:email", async (req, res) => {
+    const email = req.params.email;
+    const result = await bookings.find({ userEmail: email }).toArray();
+    res.send(result)
+})
 
 
 app.listen(PORT, (req, res) => {
