@@ -79,9 +79,20 @@ app.delete('/delete-studio/:id', async (req, res) => {
 
 app.post('/add-bookings', async (req, res) => {
     const booking = req.body;
+    const existing = await bookings.findOne({
+        studioId: booking.studioId,
+        bookingDate: booking.bookingDate,
+        startTime: { $lt: booking.endTime },
+        endTime: { $gt: booking.startTime },
+    });
+    if (existing) {
+        return res.status(409).send({
+            message: "This time slot is already booked.",
+        });
+    }
     booking.status = "Pending";
-    const result = await bookings.insertOne(booking)
-    res.send(result)
+    const result = await bookings.insertOne(booking);
+    res.send(result);
 })
 
 app.get("/bookings/:email", async (req, res) => {
