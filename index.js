@@ -22,6 +22,7 @@ const mongoClient = await connectToMongoDB()
 const db = mongoClient.db("StudioSpace")
 // studios collection
 const studios = db.collection("studios")
+const bookings = db.collection("bookings")
 
 app.get('/', (req, res) => {
     res.send({ Msg: "API is working" })
@@ -56,6 +57,12 @@ app.get('/studios/:id', async (req, res) => {
     const id = req.params.id
     const query = { _id: new ObjectId(id) }
     const result = await studios.findOne(query)
+    res.send(result)
+})
+
+app.post('/add-bookings', async (req, res) => {
+    const booking = req.body;
+    const result = await bookings.insertOne(booking)
     res.send(result)
 })
 
