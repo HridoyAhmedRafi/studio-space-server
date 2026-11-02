@@ -2,6 +2,7 @@ import express, { json } from "express"
 import cors from "cors"
 import 'dotenv/config'
 import { MongoClient, ObjectId } from 'mongodb';
+import { createRemoteJWKSet, jwtVerify } from "jose";
 const app = express()
 const PORT = process.env.PORT || 5000;
 
@@ -24,12 +25,33 @@ const db = mongoClient.db("StudioSpace")
 const studios = db.collection("studios")
 const bookings = db.collection("bookings")
 
+const varifyToken = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: "Unauthorized access" })
+    }
+    const token = authHeader.split(" ")[1]
+    if (!token) {
+        return res.status(401).send({ message: "Unauthorized access" })
+    }
+
+    const JWKS = createRemoteJWKSet(new URL(`${process.env.CLIENT_URL}/api/auth/jwks`))
+    try {
+        const { payload } = await jwtVerify(token, JWKS)
+        next()
+
+    } catch (error) {
+        return res.status(500).send({ message: "Token verification failed" })
+    }
+
+}
+
 app.get('/', (req, res) => {
     res.send({ Msg: "API is working" })
 })
 
 // http://localhost:5000/add-studio
-app.post('/add-studio', async (req, res) => {
+app.post('/add-studio', varifyToken, async (req, res) => {
     const studio = req.body;
     const result = await studios.insertOne(studio)
     res.send(result)
@@ -70,14 +92,14 @@ app.patch('/update-studio/:id', async (req, res) => {
     res.send(result)
 })
 
-app.delete('/delete-studio/:id', async (req, res) => {
+app.delete('/delete-studio/:id', varifyToken, async (req, res) => {
     const id = req.params.id;
     const query = { _id: new ObjectId(id) }
     const result = await studios.deleteOne(query)
     res.send(result)
 })
 
-app.post('/add-bookings', async (req, res) => {
+app.post('/add-bookings', varifyToken, async (req, res) => {
     const booking = req.body;
     const existing = await bookings.findOne({
         studioId: booking.studioId,
